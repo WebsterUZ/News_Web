@@ -1,163 +1,31 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>News Website</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            line-height: 1.6;
-        }
+{% extends 'base.html' %}
+{% block title %}Bosh Sahifa{% endblock %}
 
-        header {
-            background-color: #333;
-            color: white;
-            text-align: center;
-            padding: 1rem;
-        }
+{% block content %}
+  <div class="categories">
+    <h2>Kategoriyalar</h2>
+    <ul>
+      {% for category in categories %}
+        <li>
+          <a href="{% url 'category_view' category.id %}">
+            {{ category.name }} <span>({{ category.news.count }})</span>
+          </a>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
 
-        nav {
-            background-color: #f4f4f4;
-            padding: 1rem;
-        }
-
-        nav ul {
-            list-style: none;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-        }
-
-        nav ul li {
-            margin: 0 1rem;
-        }
-
-        nav ul li a {
-            text-decoration: none;
-            color: #333;
-            cursor: pointer;
-        }
-
-        nav ul li a.active {
-            font-weight: bold;
-            color: #007bff;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
-
-        .main-article {
-            background-color: #fff;
-            padding: 1rem;
-            margin-bottom: 2rem;
-            border: 1px solid #ddd;
-        }
-
-        .article-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1rem;
-        }
-
-        .article {
-            background-color: #fff;
-            padding: 1rem;
-            border: 1px solid #ddd;
-        }
-
-        .article img {
-            max-width: 100%;
-            height: auto;
-        }
-
-        .article.hidden {
-            display: none;
-        }
-
-        footer {
-            background-color: #333;
-            color: white;
-            text-align: center;
-            padding: 1rem;
-            position: relative;
-            bottom: 0;
-            width: 100%;
-        }
-    </style>
-</head>
-<body>
-    <header>
-        <h1>Yangiliklar Shahri</h1>
-    </header>
-    <div class="container">
-
-        <div class="categories">
-            <h2>Categories</h2>
-            <ul>
-                {% for category in categories %}
-                <li><a href="#" data-category="mahalliy"> {{ category.name }} <span>({{ category.news.count }})</span></a></li>
-                {% endfor %}
-            </ul>
-            </div>
-        
-        <h1>Jahon Yangiliklar</h1>
-        <div class="article-grid">
-
-            {% for item in lates_news %}
-            <div class="article">
-                <img src="{{ item.image.url }}" alt="Article image">
-                <h3>{{ item.title }}</h3>
-                <p>{{ item.content|truncatewords:15 }}</p>
-                <a href=" {% url 'news_detail' item.id %} ">Batafsil</a>
-            </div>
-            {% endfor %}
-
-            
-        </div>
+  <h2>So‘nggi Yangiliklar</h2>
+  <div class="article-grid" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:1rem;">
+    {% for item in lates_news %}
+    <div class="article" style="border: 1px solid #ddd; padding: 1rem;">
+      {% if item.image %}
+        <img src="{{ item.image.url }}" alt="{{ item.title }}" style="max-width:100%; height:auto;">
+      {% endif %}
+      <h3>{{ item.title }}</h3>
+      <p>{{ item.content|truncatewords:20 }}</p>
+      <a href="{% url 'news_detail' item.id %}">Batafsil</a>
     </div>
-    <footer>
-        <p>© 2025 Daily News. All rights reserved.</p>
-    </footer>
-    <script>
-        const navLinks = document.querySelectorAll('nav ul li a');
-        const catLinks = document.querySelectorAll('.categories ul li a');
-        const articles = document.querySelectorAll('.article');
-
-        const updateFilters = (category) => {
-            articles.forEach(article => {
-                if (category === 'all' || article.getAttribute('data-category') === category) {
-                    article.classList.remove('hidden');
-                } else {
-                    article.classList.add('hidden');
-                }
-            });
-        };
-
-        navLinks.forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                const category = link.getAttribute('data-category');
-                navLinks.forEach(l => l.classList.remove('active'));
-                link.classList.add('active');
-                updateFilters(category);
-            });
-        });
-
-        catLinks.forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                const category = link.getAttribute('data-category');
-                navLinks.forEach(l => l.classList.remove('active'));
-                document.querySelector(`nav ul li a[data-category="${category}"]`).classList.add('active');
-                updateFilters(category);
-            });
-        });
-    </script>
-</body>
-</html>
+    {% endfor %}
+  </div>
+{% endblock %}

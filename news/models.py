@@ -11,7 +11,7 @@ class New(models.Model):
     title = models.CharField(max_length=50)
     image = models.ImageField(upload_to='media')
     content = models.TextField()
-    Category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, related_name='news')
+    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, related_name='news')
     
     def __str__(self):
         return self.title
